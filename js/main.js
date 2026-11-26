@@ -49,6 +49,8 @@
     cpu: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/>',
     shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
     cap: '<path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+    check: '<path d="M20 6L9 17l-5-5"/>',
+    copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
     book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/><path d="M20 17v5H6.5A2.5 2.5 0 0 1 4 19.5"/>',
   };
   const icon = (n) => `<svg viewBox="0 0 24 24" aria-hidden="true">${P[n] || P.code}</svg>`;
@@ -111,6 +113,7 @@
             <h1 class="hero__title">${esc(h.greeting || "")}<span class="name">${nameHtml}</span></h1>
             <p class="hero__tagline">${h.tagline || ""}</p>
             ${h.intro ? `<p class="hero__intro">${esc(h.intro)}</p>` : ""}
+            ${(h.interests || []).length ? `<div class="interests"><span>Enthusiast in</span>${h.interests.map((x) => `<span class="chip">${esc(x)}</span>`).join("")}</div>` : ""}
             <div class="hero__cta">
               ${h.resumeUrl ? `<a class="btn btn--primary" href="${esc(h.resumeUrl)}" download="${esc(h.resumeFileName || "")}">${icon("download")} Download Resume</a>` : ""}
               <a class="btn btn--ghost" href="#projects">View My Work ${icon("arrow")}</a>
@@ -135,6 +138,12 @@
       <section class="section" id="skills">
         <div class="container">
           ${head(s.title, s.subtitle)}
+          ${(s.interests || []).length ? `<div class="passion reveal">
+            ${s.interestsLabel ? `<div class="passion__label">${esc(s.interestsLabel)}</div>` : ""}
+            <div class="passion__items">
+              ${s.interests.map((x) => `<div class="passion__item"><span class="skill__icon">${icon(x.icon)}</span><div><strong>${esc(x.name)}</strong><p>${esc(x.text)}</p></div></div>`).join("")}
+            </div>
+          </div>` : ""}
           <div class="grid grid--3">
             ${(s.categories || []).map((c) => `
               <div class="card reveal">
@@ -149,7 +158,7 @@
     experience() {
       const e = C.experience || {};
       return `
-      <section class="section section--alt" id="experience">
+      <section class="section" id="experience">
         <div class="container">
           ${head(e.title, e.subtitle)}
           <div class="timeline">
@@ -169,19 +178,31 @@
                 ${bullets(j.highlights)}
                 ${tags(j.tags)}
               </article>`).join("")}
-            ${(e.education || []).map((d) => `
-              <article class="card job job--edu reveal">
-                <div class="job__top">
-                  <div>
-                    <h3 class="job__role">${icon("cap")} ${esc(d.degree)}</h3>
-                    <div class="job__company">${esc(d.school)}${d.note ? ` · ${esc(d.note)}` : ""}</div>
-                  </div>
-                  <div class="job__meta">
+          </div>
+        </div>
+      </section>`;
+    },
+
+    education() {
+      const ed = C.education || {};
+      return `
+      <section class="section" id="education">
+        <div class="container">
+          ${head(ed.title, ed.subtitle)}
+          <div class="edu-list">
+            ${(ed.items || []).map((d) => `
+              <article class="card edu reveal">
+                <span class="edu__icon">${icon("cap")}</span>
+                <div class="edu__main">
+                  <h3 class="edu__degree">${esc(d.degree)}</h3>
+                  <div class="edu__school">${esc(d.school)}</div>
+                  <div class="edu__meta">
                     ${d.period ? `<span>${icon("calendar")} ${esc(d.period)}</span>` : ""}
                     ${d.location ? `<span>${icon("pin")} ${esc(d.location)}</span>` : ""}
                   </div>
+                  ${bullets(d.highlights)}
                 </div>
-                ${bullets(d.highlights)}
+                ${d.grade ? `<div class="edu__grade"><div class="edu__gpa">${esc(d.grade)}</div><div class="edu__gpa-label">${esc(d.gradeLabel || "")}</div></div>` : ""}
               </article>`).join("")}
           </div>
         </div>
@@ -194,7 +215,7 @@
       <section class="section" id="projects">
         <div class="container">
           ${head(p.title, p.subtitle)}
-          <div class="grid grid--3">
+          <div class="grid grid--flex">
             ${(p.items || []).map((x) => `
               <article class="card project reveal">
                 <div class="project__thumb">${x.image ? `<img src="${esc(x.image)}" alt="${esc(x.title)}" loading="lazy" />` : icon(x.icon || "folder")}${x.label ? `<span class="project__label">${esc(x.label)}</span>` : ""}</div>
@@ -216,7 +237,7 @@
       const all = (c.items || []).map((x, i) => ({ ...x, i }));
       const withImg = all.filter((x) => x.image), courses = all.filter((x) => !x.image);
       return `
-      <section class="section section--alt" id="certifications">
+      <section class="section" id="certifications">
         <div class="container">
           ${head(c.title, c.subtitle)}
           ${withImg.length ? `<div class="grid grid--2 certs">
@@ -249,6 +270,35 @@
       </section>`;
     },
 
+    achievements() {
+      const a = C.achievements || {};
+      const profiles = (a.profiles || []).filter((x) => x.url);
+      return `
+      <section class="section" id="achievements">
+        <div class="container">
+          ${head(a.title, a.subtitle)}
+          <div class="ach">
+            ${(a.highlights || []).map((x) => `
+              <div class="card ach__stat reveal">
+                <span class="skill__icon">${icon(x.icon)}</span>
+                <div class="ach__value">${esc(x.value)}</div>
+                <div class="ach__label">${esc(x.label)}</div>
+                ${x.note ? `<div class="ach__note">${esc(x.note)}</div>` : ""}
+                ${x.tags ? tags(x.tags) : ""}
+              </div>`).join("")}
+            ${(a.contests || []).length ? `
+              <div class="card ach__contests reveal">
+                <h3 class="ach__title">${icon("award")} ${esc(a.contestsTitle || "Contest rankings")}</h3>
+                <ol class="ranks">
+                  ${a.contests.map((c) => `<li><span class="rank">${esc(c.rank)}</span><div><strong>${esc(c.name)}</strong>${c.note ? `<small>${esc(c.note)}</small>` : ""}</div></li>`).join("")}
+                </ol>
+                ${profiles.length ? `<div class="ach__links">${profiles.map((x) => `<a class="btn btn--ghost btn--sm" href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name)} ${icon("external")}</a>`).join("")}</div>` : ""}
+              </div>` : ""}
+          </div>
+        </div>
+      </section>`;
+    },
+
     contact() {
       const c = C.contact || {};
       const info = [
@@ -265,15 +315,43 @@
               ${info.map((x) => `<div class="card info reveal"><span class="skill__icon">${icon(x.i)}</span><div><div class="info__label">${x.l}</div><div class="info__value">${x.v}</div></div></div>`).join("")}
             </div>
             <form class="card form reveal" id="contactForm" novalidate>
-              <h3>Send a Message</h3>
-              <div class="form__row">
-                <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" required autocomplete="name" /></div>
-                <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" required autocomplete="email" /></div>
+              <div class="form__body" id="formBody">
+                <div class="form__head">
+                  <h3>Send a Message</h3>
+                  ${c.replyTime ? `<p class="form__hint">${esc(c.replyTime)}</p>` : ""}
+                </div>
+                <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+                <div class="form__row">
+                  <div class="field">
+                    <label for="f-name">Name <span class="req" aria-hidden="true">*</span></label>
+                    <input id="f-name" name="name" autocomplete="name" maxlength="100" aria-describedby="err-name" />
+                    <small class="field__err" id="err-name"></small>
+                  </div>
+                  <div class="field">
+                    <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
+                    <input id="f-email" name="email" type="email" autocomplete="email" maxlength="150" aria-describedby="err-email" />
+                    <small class="field__err" id="err-email"></small>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="f-subject">Subject</label>
+                  <input id="f-subject" name="subject" maxlength="150" placeholder="e.g. Spring Boot + Angular project" />
+                </div>
+                <div class="field">
+                  <label for="f-msg">Message <span class="req" aria-hidden="true">*</span></label>
+                  <textarea id="f-msg" name="message" maxlength="${+c.messageMaxLength || 2000}" aria-describedby="err-message msg-count" placeholder="Tell me about your project, timeline and budget"></textarea>
+                  <div class="field__foot"><small class="field__err" id="err-message"></small><small class="field__count" id="msg-count">0 / ${+c.messageMaxLength || 2000}</small></div>
+                </div>
+                ${c.web3formsKey && c.hcaptcha ? `<div class="h-captcha" data-captcha="true" data-theme="${root.getAttribute("data-theme") === "light" ? "light" : "dark"}"></div>` : ""}
+                <button class="btn btn--primary form__submit" type="submit"><span class="spinner" aria-hidden="true"></span><span class="form__submit-label">${icon("send")} Send Message</span></button>
+                <div class="form__status" id="formStatus" role="status" aria-live="polite"></div>
               </div>
-              <div class="field"><label for="f-subject">Subject</label><input id="f-subject" name="subject" /></div>
-              <div class="field"><label for="f-msg">Message</label><textarea id="f-msg" name="message" required></textarea></div>
-              <button class="btn btn--primary" type="submit">${icon("send")} Send Message</button>
-              <p class="form__status" id="formStatus" role="status"></p>
+              <div class="form__done" id="formDone" hidden tabindex="-1">
+                <span class="form__done-icon">${icon("check")}</span>
+                <h3>Message sent!</h3>
+                <p id="formDoneText"></p>
+                <button type="button" class="btn btn--ghost btn--sm" id="formAgain">Send another message</button>
+              </div>
             </form>
           </div>
         </div>
@@ -286,7 +364,7 @@
     const list = enabled(); const i = list.findIndex((s) => s.id === id);
     return (list[i + 1] || list[0] || { id: "hero" }).id;
   }
-  const LABELS = { hero: "Home", skills: "Skills", experience: "Experience", projects: "Projects", certifications: "Certifications", contact: "Contact" };
+  const LABELS = { hero: "Home", skills: "Skills", experience: "Experience", education: "Education", projects: "Projects", certifications: "Certifications", achievements: "Achievements", contact: "Contact" };
 
   /* ---------- Render page ---------- */
   function render() {
@@ -301,6 +379,8 @@
     $("#navLogo").textContent = site.logoText || (C.hero && C.hero.name) || "";
     $("#navLinks").innerHTML = enabled().map((s) => `<a href="#${s.id}" data-id="${s.id}">${LABELS[s.id]}</a>`).join("");
     $("#main").innerHTML = enabled().map((s) => R[s.id]()).join("");
+    // alternate section backgrounds automatically, whatever the order
+    $$("#main > section.section").forEach((el, i) => el.classList.toggle("section--alt", i % 2 === 0));
     $("#footer").innerHTML = `<div class="container footer__inner">
       <span>© ${new Date().getFullYear()} ${esc((C.hero && C.hero.name) || "")}. ${esc((C.footer && C.footer.text) || "")}</span>
       <div class="social">${socialLinks()}</div></div>`;
@@ -318,7 +398,7 @@
     });
     links.addEventListener("click", (e) => { if (e.target.closest("a")) close(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
-    window.addEventListener("resize", () => { if (innerWidth > 860) close(); });
+    window.addEventListener("resize", () => { if (innerWidth > 1100) close(); });
 
     const toTop = $("#toTop");
     const onScroll = () => {
@@ -392,31 +472,125 @@
 
   function initForm() {
     const form = $("#contactForm"); if (!form) return;
-    const status = $("#formStatus"), c = C.contact || {};
-    const say = (msg, cls) => { status.textContent = msg; status.className = "form__status " + (cls || ""); };
+    const c = C.contact || {};
+    const status = $("#formStatus"), btn = form.querySelector(".form__submit");
+    const body = $("#formBody"), done = $("#formDone");
+    const max = +c.messageMaxLength || 2000;
+    const mode = c.web3formsKey ? "web3forms" : c.formEndpoint ? "endpoint" : "mailto";
+    const loadedAt = Date.now();
+    const F = { name: $("#f-name"), email: $("#f-email"), subject: $("#f-subject"), message: $("#f-msg") };
+
+    // Optional hCaptcha (Web3Forms free plan)
+    if (mode === "web3forms" && c.hcaptcha && !document.querySelector('script[src*="web3forms.com/client/script.js"]')) {
+      const sc = document.createElement("script");
+      sc.src = "https://web3forms.com/client/script.js"; sc.async = true; sc.defer = true;
+      document.body.appendChild(sc);
+    }
+
+    const say = (html, cls) => { status.innerHTML = html; status.className = "form__status " + (cls || ""); };
+    const setErr = (key, msg) => {
+      const el = F[key], out = $("#err-" + key);
+      if (out) out.textContent = msg || "";
+      el.closest(".field").classList.toggle("invalid", !!msg);
+      el.setAttribute("aria-invalid", msg ? "true" : "false");
+    };
+    const rules = {
+      name: (v) => (v.trim().length < 2 ? "Please enter your name." : ""),
+      email: (v) => (!v.trim() ? "Please enter your email." : !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? "Please enter a valid email address." : ""),
+      message: (v) => (v.trim().length < 10 ? "Please write a little more (at least 10 characters)." : ""),
+    };
+    const validate = () => {
+      let first = null;
+      Object.keys(rules).forEach((k) => { const m = rules[k](F[k].value); setErr(k, m); if (m && !first) first = F[k]; });
+      return first;
+    };
+    // live feedback: clear an error as soon as the field becomes valid
+    Object.keys(rules).forEach((k) => F[k].addEventListener("input", () => {
+      if (F[k].closest(".field").classList.contains("invalid")) setErr(k, rules[k](F[k].value));
+    }));
+    const counter = $("#msg-count");
+    const updateCount = () => {
+      const n = F.message.value.length;
+      counter.textContent = `${n} / ${max}`;
+      counter.classList.toggle("near", n > max * 0.9);
+    };
+    F.message.addEventListener("input", updateCount);
+
+    const loading = (on) => {
+      btn.disabled = on; btn.classList.toggle("is-loading", on);
+      btn.querySelector(".form__submit-label").innerHTML = on ? "Sending…" : `${icon("send")} Send Message`;
+    };
+    const showDone = (name) => {
+      $("#formDoneText").textContent = `Thanks${name ? ", " + name.split(" ")[0] : ""}! Your message is in my inbox. ${c.replyTime || ""}`.trim();
+      body.hidden = true; done.hidden = false; done.focus();
+      form.reset(); updateCount(); say("");
+      if (window.hcaptcha) { try { window.hcaptcha.reset(); } catch (e) {} }
+    };
+    const fail = (msg) => {
+      say(`<span>${esc(msg)}</span>
+        <span class="form__fallback">
+          <span>You can also email me directly at <strong class="form__addr">${esc(c.email)}</strong></span>
+          <span class="form__fallback-btns">
+            <button type="button" class="btn btn--ghost btn--sm" id="copyEmail">${icon("copy")} Copy email</button>
+            <a class="btn btn--ghost btn--sm" href="mailto:${esc(c.email)}">${icon("mail")} Open email app</a>
+          </span>
+        </span>`, "err");
+      const cb = $("#copyEmail");
+      cb && cb.addEventListener("click", () => {
+        const ok = () => { cb.innerHTML = `${icon("check")} Copied`; };
+        if (navigator.clipboard) navigator.clipboard.writeText(c.email).then(ok).catch(() => { cb.textContent = c.email; });
+        else cb.textContent = c.email;
+      });
+    };
+
+    $("#formAgain").addEventListener("click", () => { done.hidden = true; body.hidden = false; F.name.focus(); });
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const d = Object.fromEntries(new FormData(form));
-      if (!d.name.trim() || !d.message.trim()) return say("Please fill in your name and message.", "err");
-      if (!/^\S+@\S+\.\S+$/.test(d.email)) return say("Please enter a valid email address.", "err");
+      say("");
+      const firstBad = validate();
+      if (firstBad) { firstBad.focus(); return say("Please fix the highlighted fields.", "err"); }
 
-      if (!c.formEndpoint) {
-        const subject = encodeURIComponent(d.subject || `Portfolio message from ${d.name}`);
-        const body = encodeURIComponent(`${d.message}\n\n— ${d.name} (${d.email})`);
-        location.href = `mailto:${c.email}?subject=${subject}&body=${body}`;
-        return say("Opening your email app…", "ok");
+      const name = F.name.value.trim(), email = F.email.value.trim();
+      const subj = F.subject.value.trim(), msg = F.message.value.trim();
+
+      // Spam traps: hidden honeypot ticked, or form sent faster than a human could type it.
+      // Pretend success so bots learn nothing.
+      if (form.botcheck.checked || Date.now() - loadedAt < 3000) return showDone(name);
+
+      if (mode === "mailto") {
+        const s = encodeURIComponent(subj || `Portfolio message from ${name}`);
+        const b = encodeURIComponent(`${msg}\n\n— ${name} (${email})`);
+        location.href = `mailto:${c.email}?subject=${s}&body=${b}`;
+        return say(`Opening your email app… If nothing opens, email me at <strong>${esc(c.email)}</strong>.`, "ok");
       }
-      const btn = form.querySelector("button[type=submit]");
-      btn.disabled = true; say("Sending…");
+
+      const fd = new FormData(form);   // includes h-captcha-response when hCaptcha is on
+      if (mode === "web3forms" && c.hcaptcha && !String(fd.get("h-captcha-response") || "").trim()) {
+        return say("Please complete the captcha check.", "err");
+      }
+      fd.delete("botcheck");
+      fd.set("name", name); fd.set("email", email); fd.set("message", msg);
+      fd.set("subject", `${c.subjectPrefix ? c.subjectPrefix + " " : ""}${subj || "New message from " + name}`);
+      if (c.fromName) fd.set("from_name", c.fromName);
+      fd.set("page", location.href);
+
+      let url = c.formEndpoint;
+      if (mode === "web3forms") { url = "https://api.web3forms.com/submit"; fd.set("access_key", c.web3formsKey); }
+
+      loading(true);
+      const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), 15000);
       try {
-        const payload = { ...d };
-        if (c.web3formsKey) payload.access_key = c.web3formsKey;
-        const res = await fetch(c.formEndpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) });
-        if (!res.ok) throw new Error();
-        form.reset(); say("Thanks! Your message has been sent.", "ok");
+        const res = await fetch(url, { method: "POST", body: fd, headers: { Accept: "application/json" }, signal: ctrl.signal });
+        const json = await res.json().catch(() => ({}));
+        const ok = res.ok && (mode !== "web3forms" || json.success === true);
+        if (ok) return showDone(name);
+        if (res.status === 429) return fail("Too many messages right now. Please try again in a few minutes.");
+        const detail = json.message || (json.body && json.body.message) || "";
+        fail(`Sorry, your message couldn't be sent${detail ? ` (${detail})` : ""}.`);
       } catch (err) {
-        say("Sorry, something went wrong. Please email me directly.", "err");
-      } finally { btn.disabled = false; }
+        fail(err && err.name === "AbortError" ? "The request timed out. Please check your connection and try again." : "Network error. Please check your connection and try again.");
+      } finally { clearTimeout(timer); loading(false); }
     });
   }
 
