@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio</title>
+  <meta name="description" content="" />
+  <meta property="og:title" content="" />
+  <meta property="og:description" content="" />
+  <meta property="og:image" content="" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <!-- Apply saved theme before paint (prevents flash) -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("pf-theme");
+        if (!t || t === "auto") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="#hero" class="nav__logo" id="navLogo"></a>
+      <nav class="nav__links" id="navLinks" aria-label="Main navigation"></nav>
+      <div class="nav__actions">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle day/night mode">
+          <svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="icon-btn nav__burger" id="burger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <footer class="footer" id="footer"></footer>
+
+  <!-- Certificate lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Certificate preview" hidden>
+    <button class="lightbox__close icon-btn" id="lightboxClose" aria-label="Close">✕</button>
+    <img id="lightboxImg" alt="" />
+    <p id="lightboxCaption"></p>
+  </div>
+
+  <!-- Visitor settings panel -->
+  <div class="settings" id="settings" hidden>
+    <button class="settings__fab" id="settingsFab" aria-label="Open display settings" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <div class="settings__panel" id="settingsPanel" hidden>
+      <h4>Display</h4>
+      <div class="settings__row">
+        <span>Theme</span>
+        <div class="seg" id="themeSeg">
+          <button data-mode="light">Day</button>
+          <button data-mode="dark">Night</button>
+          <button data-mode="auto">Auto</button>
+        </div>
+      </div>
+      <div class="settings__row settings__row--col">
+        <span>Accent color</span>
+        <div class="swatches" id="swatches"></div>
+      </div>
+      <div class="settings__row">
+        <span>Animations</span>
+        <label class="switch"><input type="checkbox" id="animToggle" /><i></i></label>
+      </div>
+      <button class="btn btn--ghost btn--sm" id="settingsReset">Reset</button>
+    </div>
+  </div>
+
+  <button class="to-top icon-btn" id="toTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
