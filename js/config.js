@@ -93,7 +93,7 @@ window.PORTFOLIO_CONFIG = {
         company: "BRAC IT Services Limited",
         period: "Jan 2025 - Present",
         location: "Gulshan-1, Dhaka",
-        description: "Lead delivery of enterprise and AI systems, mentor engineers, and act as the primary technical contact for clients.",
+        description: "Lead delivery of enterprise and AI systems, mentor engineers, and act as the primary technical contact for clients across several projects.",
         highlights: [
           "Led the Vendor Performance Evaluation System end to end and mentored two engineers: Spring Boot 4, Angular 21, Keycloak SSO and Resilience4j.",
           "Containerised applications with Docker and automated their build and deployment through GitLab CI/CD pipelines.",

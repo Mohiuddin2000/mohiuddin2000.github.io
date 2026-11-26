@@ -33,19 +33,22 @@
 /* Day */
 [data-theme="light"] {
   --bg: #ffffff;
-  --bg-2: #f7f7f8;
+  --bg-2: #f4f5f9;
   --card: #ffffff;
-  --card-hover: #fafafa;
-  --border: #e5e5e5;
-  --text: #0a0a0a;
-  --text-2: #525252;
-  --text-3: #8a8a8a;
-  --tag-bg: #f3f3f4;
-  --btn-bg: #0a0a0a;
+  --card-hover: #fbfbfd;
+  --border: #e3e5ec;
+  --text: #0b0d14;
+  --text-2: #4a5061;
+  --text-3: #6b7181;
+  --tag-bg: color-mix(in srgb, var(--accent) 5%, #f4f5f8);
+  --btn-bg: #0f1222;
   --btn-text: #ffffff;
-  --nav-bg: rgba(255, 255, 255, .78);
-  --glow: radial-gradient(60% 50% at 70% 30%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%);
-  --shadow: 0 10px 30px rgba(0, 0, 0, .08);
+  --nav-bg: rgba(255, 255, 255, .8);
+  --glow:
+    radial-gradient(55% 50% at 72% 32%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%),
+    radial-gradient(40% 40% at 8% 85%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 70%);
+  --shadow: 0 2px 4px rgba(15, 18, 34, .04), 0 18px 40px -12px color-mix(in srgb, var(--accent) 22%, rgba(15, 18, 34, .18));
+  --shadow-sm: 0 1px 2px rgba(15, 18, 34, .04), 0 4px 14px -6px rgba(15, 18, 34, .08);
   color-scheme: light;
 }
 
@@ -542,3 +545,84 @@ svg { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2
   .stat__label { font-size: .75rem; }
   .hero__title { font-size: 2.1rem; }
 }
+
+/* ==========================================================================
+   Day mode polish — depth, tint and contrast so white-on-white doesn't look flat.
+   Everything here is scoped to [data-theme="light"]; Night mode is untouched.
+   ========================================================================== */
+
+/* Hero: richer glow + a faint dot grid that fades out */
+[data-theme="light"] .hero { isolation: isolate; }
+[data-theme="light"] .hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(rgba(15, 18, 34, .09) 1px, transparent 1.3px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(70% 60% at 65% 35%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(70% 60% at 65% 35%, #000 20%, transparent 75%);
+}
+[data-theme="light"] .hero__photo .ring { opacity: .7; }
+[data-theme="light"] .hero__photo img,
+[data-theme="light"] .hero__photo .avatar-fallback { box-shadow: 0 20px 50px -18px color-mix(in srgb, var(--accent) 45%, transparent); }
+
+/* Lift floating bits off the page */
+[data-theme="light"] .badge,
+[data-theme="light"] .social a,
+[data-theme="light"] .btn--ghost,
+[data-theme="light"] .project__label { box-shadow: var(--shadow-sm); }
+[data-theme="light"] .btn--primary { box-shadow: 0 8px 20px -8px rgba(15, 18, 34, .45); }
+[data-theme="light"] .btn--primary:hover { opacity: 1; background: color-mix(in srgb, var(--accent) 22%, var(--btn-bg)); }
+[data-theme="light"] .nav.scrolled { box-shadow: 0 1px 0 var(--border), 0 8px 24px -16px rgba(15, 18, 34, .18); }
+
+/* Cards: resting depth, accent-tinted hover */
+[data-theme="light"] .card { box-shadow: var(--shadow-sm); }
+[data-theme="light"] .card:hover { box-shadow: var(--shadow); }
+
+/* Tags & chips: soft accent tint instead of flat gray */
+[data-theme="light"] .tag { border-color: color-mix(in srgb, var(--accent) 12%, var(--border)); color: #2b3040; }
+[data-theme="light"] .tag:hover { color: var(--accent); }
+[data-theme="light"] .chip { background: color-mix(in srgb, var(--accent) 9%, #fff); }
+
+/* Icons: a touch more color and a hairline ring */
+[data-theme="light"] .skill__icon,
+[data-theme="light"] .edu__icon {
+  background: color-mix(in srgb, var(--accent) 11%, #fff);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* Passion strip */
+[data-theme="light"] .passion {
+  background: linear-gradient(120deg, color-mix(in srgb, var(--accent) 12%, #fff), #fff 70%);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Project thumbnails: vivid tinted gradient instead of washed-out lavender */
+[data-theme="light"] .project__thumb {
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 45%),
+    radial-gradient(circle at 12% 15%, color-mix(in srgb, var(--accent) 34%, transparent), transparent 55%),
+    radial-gradient(circle at 92% 95%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 50%),
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, #fff), color-mix(in srgb, var(--accent) 5%, #fff));
+  border-color: color-mix(in srgb, var(--accent) 18%, var(--border));
+}
+[data-theme="light"] .project__thumb > svg {
+  box-sizing: content-box; width: 26px; height: 26px; padding: 14px; border-radius: 16px;
+  background: #fff; box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--accent) 55%, transparent), 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* Timeline */
+[data-theme="light"] .timeline::before { background: linear-gradient(var(--accent), color-mix(in srgb, var(--accent) 10%, var(--border))); opacity: .45; }
+[data-theme="light"] .job::before { background: #fff; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent); }
+
+/* Grade / rank badges */
+[data-theme="light"] .edu__grade { background: color-mix(in srgb, var(--accent) 6%, #fff); border-color: color-mix(in srgb, var(--accent) 18%, var(--border)); }
+
+/* Form: recessed inputs (mirrors the dark inset look) */
+[data-theme="light"] .field input,
+[data-theme="light"] .field textarea { background: #f7f8fb; }
+[data-theme="light"] .field input:focus,
+[data-theme="light"] .field textarea:focus { background: #fff; }
+
+/* Small floating controls */
+[data-theme="light"] .settings__fab,
+[data-theme="light"] .to-top,
+[data-theme="light"] .hire { box-shadow: var(--shadow-sm); }
