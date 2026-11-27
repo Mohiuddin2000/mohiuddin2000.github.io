@@ -13,8 +13,9 @@
   <script>
     (function () {
       try {
-        var t = localStorage.getItem("pf-theme");
-        if (!t || t === "auto") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        var DEFAULT = "dark"; // keep in sync with theme.defaultMode in js/config.js
+        var t = localStorage.getItem("pf-theme") || DEFAULT;
+        if (t === "auto") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
     })();

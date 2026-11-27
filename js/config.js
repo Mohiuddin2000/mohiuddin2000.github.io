@@ -13,7 +13,7 @@ window.PORTFOLIO_CONFIG = {
 
   /* ---------- Appearance ---------- */
   theme: {
-    defaultMode: "auto",          // "dark" | "light" | "auto" (follows device)
+    defaultMode: "dark",          // "dark" | "light" | "auto" (follows device) — keep index.html's pre-paint DEFAULT in sync
     accentColor: "#6366f1",       // any CSS color
     accentChoices: ["#6366f1", "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#06b6d4", "#ec4899"],
     font: "Inter",                // "Inter" | "Poppins" | "Space Grotesk" | "system"
